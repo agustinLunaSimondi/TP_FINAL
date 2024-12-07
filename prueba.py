@@ -1,33 +1,29 @@
-# Instalar dependencias necesarias
-
-# Importar bibliotecas
 import os
 from flask import Flask, request, render_template, send_from_directory
-from flask_ngrok import run_with_ngrok
 import numpy as np
 from PIL import Image
 import cv2
 from tensorflow.keras.models import load_model
 
-# Cargar los modelos preentrenados
-UNET_MODEL_PATH = ''  # Cambia esto a tu modelo U-Net
-CLASSIFICATION_MODEL_PATH = ''  # Cambia esto a tu modelo de clasificación
+# Configuración de la aplicación
+app = Flask(__name__)
 
-unet_model = load_model(UNET_MODEL_PATH)
-classification_model = load_model(CLASSIFICATION_MODEL_PATH)
+# Rutas de los modelos
+UNET_MODEL_PATH = 'modelos/modelo_unet.h5'
+CLASSIFICATION_MODEL_PATH = 'modelos/modelo_clasificacion.h5'
 
-# Crear directorios para guardar imágenes
+# Directorios para guardar imágenes
 UPLOAD_FOLDER = './uploads'
 MASK_FOLDER = './masks'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(MASK_FOLDER, exist_ok=True)
 
-# Crear la aplicación Flask
-app = Flask(__name__)
-run_with_ngrok(app)  # Activar Flask con ngrok
-
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MASK_FOLDER'] = MASK_FOLDER
+
+# Cargar modelos
+#unet_model = load_model(UNET_MODEL_PATH)
+#classification_model = load_model(CLASSIFICATION_MODEL_PATH)
 
 def preprocesar_imagen(filepath, target_size=(256, 256)):
     """
@@ -122,33 +118,5 @@ def masked_file(filename):
     """
     return send_from_directory(app.config['MASK_FOLDER'], filename)
 
-# Código para iniciar la aplicación Flask
 if __name__ == '__main__':
-    # Crear plantillas HTML
-    with open('templates/index.html', 'w') as f:
-        f.write("""
-        <!doctype html>
-        <title>Clasificación de Larvas</title>
-        <h1>Sube una imagen para clasificar</h1>
-        <form method="post" enctype="multipart/form-data">
-            <input type="file" name="file">
-            <input type="submit" value="Subir">
-        </form>
-        """)
-
-    with open('templates/result.html', 'w') as f:
-        f.write("""
-        <!doctype html>
-        <title>Resultados</title>
-        <h1>Resultados</h1>
-        <p><strong>Clasificación:</strong> {{ clase }}</p>
-        <p><strong>Confianza:</strong> {{ confianza }}</p>
-        <h2>Imagen Original</h2>
-        <img src="{{ url_for('uploaded_file', filename=original_image) }}" style="max-width:500px;">
-        <h2>Imagen con Máscara</h2>
-        <img src="{{ url_for('masked_file', filename=masked_image) }}" style="max-width:500px;">
-        <br><a href="/">Subir otra imagen</a>
-        """)
-
-    # Ejecutar la aplicación
-    app.run()
+    app.run(debug=True)
