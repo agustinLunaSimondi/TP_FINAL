@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de Clasificación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        img {
+            margin: 20px auto;
+            max-width: 80%;
+            border: 1px solid #ccc;
+        }
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Resultados de Clasificación</h1>
+    <div class="result">
+        <p><strong>Clasificación:</strong> {{ clase }}</p>
+        <p><strong>Confianza:</strong> {{ confianza }}</p>
+    </div>
+    <h2>Imagen Original</h2>
+    <img src="{{ url_for('uploaded_file', filename=original_image) }}" alt="Imagen Original">
+    <h2>Imagen con Máscara</h2>
+    <img src="{{ url_for('masked_file', filename=masked_image) }}" alt="Imagen con Máscara">
+    <br>
+    <a href="/" style="font-size: 16px; text-decoration: none; color: #007BFF;">&#x2B05; Subir otra imagen</a>
+</body>
+</html>
